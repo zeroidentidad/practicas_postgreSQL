@@ -1,0 +1,1 @@
+DROP DATABASE postgre_esencial_v2b;

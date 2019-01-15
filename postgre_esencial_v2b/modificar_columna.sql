@@ -1,0 +1,1 @@
+ALTER TABLE public.profesores ALTER COLUMN nombre TYPE text USING nombre::text;
