@@ -1,0 +1,30 @@
+
+Herramientas administrativas:
+- `psql` > terminal/texto administrativas y desarrollo
+- `pgAdmin` > UI administrativas y de desarrollo
+
+entendiendo postgresql
+- organizacion artefactos u objetos logicos como fisicos
+
+servidor fisico
+- libreria y archivos fisicos
+- servicio > instancia: responde a una direccion IP, tiene sus propios permisos de acceso, mantiene aislada su informacion o datos
+
+*service
+
+
+*database > es una organizacion logica de datos y codigo. un service puede contener una o mas bases de datos. existe una relacion a archivos fisicos en nuestro directorio de archivos
+
+*schema > una organizacion de datos y codigo. una base de datos puede contener uno o mas esquemas
+
+*tablespace > archivo fisico
+
+*catalog > informacion del sistema-objetos en detalle de meta informacion en la base de datos
+
+*archivos de configuracion > postgresql.conf (info general instalacion), pg_hba.conf (detalles y definicion de seguridad), pg_ident.conf (mapeo de configuraciones)
+
+*metodos de conexion pg_hba.conf >
+-trust: menos segura, no password
+-password: pide pass, texto simple
+-md5: pide pass, cifrada con hash md5
+-ident: usa pg_ident.conf, mapea user OS con user database
