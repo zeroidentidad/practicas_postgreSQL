@@ -28,3 +28,57 @@ servidor fisico
 -password: pide pass, texto simple
 -md5: pide pass, cifrada con hash md5
 -ident: usa pg_ident.conf, mapea user OS con user database
+
+*roles >
+- roles de inicio de sesion: con password asignable de accceso a db
+- roles de grupo: con permisos, agrupa a otros dentro de un rol de uso
+
+datos serial (serializable) para id de registros: create sequence ejemplo; select nextval('ejemplo'); select currentval('ejemplo'); select setval('ejemplo', 5);
+
+datos cadenas de texto, operaciones: select lpad('ab',2,'0') AS pad, repeat('-',4)||'zy' AS dash, trim('  tr  ') AS trim;
+
+substring: select split_part('312-4657-2947', '-', 2) AS x;
+
+arreglos: select string_to_array('aaa.bbb.ccc','.') as y;  -- los arreglos  funcionan de manera nativa en postgres
+
+select array[2013,2014,2015] as anios;  select array(select distinc gender from data); 
+
+select '{mysql,postgressql}'::text[] AS x; -- conversion (::typeval[])
+
+select x[3] from (select '{mysql,postgresql,sqlite}'::text[] AS x) as y; --valor posicion 3
+
+select x[2:3] from (select '{mysql,postgresql,sqlite}'::text[] AS x) as y; --valor rango posiciones
+
+select UNNEST(x[2:3]) from (select '{mysql,postgresql,sqlite}'::text[] AS x) as y; --valor indvidual rango posiciones
+
+
+rangos: select '(0,6)'::int8range;  select '[0,6)'::int8range; select '[2015-07-01,2015-08-01]'::daterange;
+
+rango infinito: select '[100,)'::int8range;
+
+select * from data where '[70.0,71.0)'::numrange @> height;
+
+probando usar JSON:
+
+create table profiles
+(id serial primary key,
+ profile JSON
+);
+
+insert into profiles(profile) values ('{"name":"mario","tech":["postgresql","ruby","elixir"]}');
+
+select * from profiles;
+
+insert into profiles(profile) values ('{"name":"jesus ferrer","tech":["php","java","oracle"]}');
+
+select json_extract_path_text(profile,'name') from profiles;
+
+select json_extract_path_text(profile,'tech') from profiles;
+
+select json_array_elements('["hello",1.3,"\u2603"]');
+
+create table profiles_b
+(id serial primary key,
+ profile JSONB
+);
+
