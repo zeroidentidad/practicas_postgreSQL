@@ -82,3 +82,84 @@ create table profiles_b
  profile JSONB
 );
 
+select json_extract_path_text(profile,'tech') from profiles;
+select jsonb_extract_path_text(profile,'tech') from profiles_b;
+
+select p.id, string_to_array(string_agg(elem,', '), ',') as list from profiles p, json_array_elements_text(p.profile->'tech') elem group by 1;
+
+select id, profile->>'name' from profiles;
+
+select * from profiles where profile->>'name'='jesus ferrer';
+
+select row_to_json(data) from data limit 3;
+
+select row_to_json(row(gender,height)) from data limit 3;
+
+select row_to_json(t) from (select gender, height from data limit 3) t;
+
+select array_to_json(array_agg(row_to_json(t))) 
+from (select gender, height from data limit 3) t;
+
+
+HStore:
+
+activacion :> create extension hstore; desactivar :> drop extension hstore;
+
+probando usar HStore:
+
+create table hprofiles(id serial primary key, profile hstore);
+
+insert into hprofiles (profile) values('name=>jesus, php=>true, postgresql=>true');
+insert into hprofiles (profile) values('name=>ferrer, java=>true, oracle=>true');
+
+select profile->>'name' from hprofiles;
+
+select * from hprofiles where (profile->'ruby')::boolean;
+select * from hprofiles where (profile->'php')::boolean=true;
+
+select * from hprofiles where profile@> 'nodejs=>true';
+select * from hprofiles where profile ? 'nodejs';
+
+select * from hprofiles where profile ?& ARRAY['ruby','javascript']; -- and
+
+select * from hprofiles where profile ?| ARRAY['ruby','javascript']; -- or
+
+update hprofiles set profile=profile||'html5=>true'::hstore;
+
+update hprofiles set pofile = delete(profile,'go');
+
+select akeys(profiles) from hprofiles;  select skeys(profiles) from hprofiles; || select distinct skeys(profiles) from hprofiles;
+
+select hstore_to_json(profiles) from hprofiles; 
+
+
+postGis:
+
+activacion :> create extension postgis;
+
+probando usar postGis:
+
+create table hospitales (
+id serial primary key,
+location geography,
+position geometry(POINT,4326),
+name text
+);
+
+insert into hospitales (name,location) values ('hospital xxx', ST_POINT(-6.3788,53.2911));
+
+insert into hospitales (name,location) values ('hospital rovirosa', ST_POINT(-7.3497,53.5346));
+
+select name, st_distance(location,st_point(-6237009, 53.34115)::geography) from hospitales; -- mostrar distancia a desde un punto indicado a las ubicaciones guardadas
+
+select name, st_distance(location,st_point(32.7150, 53.34115)::geography) from hospitales;
+
+select name from hospitales where ST_DWithin(location,ST_POINT(-6.237009,53.3411573))::geography, 10000; -- mostrar ubicaciones guardadas dentro de un radio a la redonda de acuerdo a un punto indicado
+
+-parsear a otros formatos:
+
+select name, st_astext(location) from hospitales;
+
+select name, st_asgeojson(location) from hospitales;
+
+select name, st_askml(location) from hospitales;
