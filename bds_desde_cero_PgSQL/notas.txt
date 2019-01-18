@@ -1,3 +1,14 @@
 config "pg_hba.conf" conexion local (solo en el mismo equipo), agregar:
 
-local    all            postgres        127.0.0.1/32            trust
+local    all            postgres        127.0.0.1/32            trust    #a:
+
+host    all            postgres        127.0.0.1/32            trust
+
+
+metacomandos mas usados:
+
+\l  # listar bds
+\c  # conectar bd a usar
+\?  # mostrar info ayuda
+\d  # mostar relaciones objetos de la bd
+\d+ table # mostrar detalle estructura objeto bd
