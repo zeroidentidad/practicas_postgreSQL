@@ -1,4 +1,4 @@
-config "pg_hba.conf" conexion local (solo en el mismo equipo), agregar:
+config "pg_hba.conf" conexion local confiable (solo en el mismo equipo), agregar:
 
 local    all            postgres        127.0.0.1/32            trust    #a:
 
@@ -12,3 +12,8 @@ metacomandos mas usados:
 \?  # mostrar info ayuda
 \d  # mostar relaciones objetos de la bd
 \d+ table # mostrar detalle estructura objeto bd
+
+conectar por cmd cuando en localhost se configuro conexion de manera confiable: $> psql -U postgres -h 127.0.0.1
+
+modificar superusuario contraseña postgres: $> ALTER ROLE postgres PASSWORD 'xpass'
+
