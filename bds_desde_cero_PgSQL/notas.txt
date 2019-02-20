@@ -12,8 +12,29 @@ metacomandos mas usados:
 \?  # mostrar info ayuda
 \d  # mostar relaciones objetos de la bd
 \d+ table # mostrar detalle estructura objeto bd
+\i 	# ejecutar comandos desde archivo de texto
+\! 	# ejecutar comandos desde el shell del sistema operativo de manera interactiva
 
 conectar por cmd cuando en localhost se configuro conexion de manera confiable: $> psql -U postgres -h 127.0.0.1
 
 modificar superusuario contraseña postgres: $> ALTER ROLE postgres PASSWORD 'xpass'
 
+metacomando de ayuda en el SQL: \h  - ejemplo: \h create
+
+dedicar espacio en disco en linux:
+
+1- chown -R postgres /home/username/misdb
+
+2- chgrp -R postgres /home/username/misdb
+
+3- psql -U postgres
+
+4- CREATE TABLESPACE tbl_misdb LOCATION '/home/username/misdb';
+
+crear db que use el tablespace creado:
+
+1- CREATE DATABASE dbejemplo TABLESPACE = tbl_misdb;
+
+2- \! ls -la
+
+3- cd 
