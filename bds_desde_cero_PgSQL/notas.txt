@@ -37,4 +37,20 @@ crear db que use el tablespace creado:
 
 2- \! ls -la
 
-3- cd 
+
+funciones select:
+
+longitud campo caracteres: select char_length('texto o campo de prueba aqui ');
+
+fecha actual: select now();
+
+crear secuencia para campo id: 
+
+\c midb
+
+create sequence secuencia_regs;
+
+usar secuencia para campo id:
+
+insert into tabla values('valor1', 10, nextval('secuencia_regs'));
+
