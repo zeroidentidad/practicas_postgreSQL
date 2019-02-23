@@ -1,0 +1,4 @@
+notas modulo 3 sobre diseño de BD:
+
+tipos de atributos: simple - monovaluado, identificador principal, identificador alternativo, multivaluado, opcional, compuesto
+
