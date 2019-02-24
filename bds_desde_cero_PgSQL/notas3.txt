@@ -1,0 +1,32 @@
+Notas modulo 4:
+
+- DDL
+
+CREATE USER nombre PASSWORD 'contraseña'
+
+CREATE DATABASE nombredb OWNER = usuario TABLESPACE = un_tablespace
+
+\db -metacomando listar tablespace
+
+CREATE TABLE nombre_tabla (
+columna1_tipo_dato,
+columna2_tipo_dato (tamaño),
+columna3_tipo_dato NOT NULL,
+columna4_tipo_dato DEFAULT valor_x_defecto,
+columna5_tipo_dato SERIAL,
+CONSTRAINT nombre_constraint1 CHECK (columnaN > valor and columnaN < valor),
+CONSTRAINT nombre_constraint2 PRIMARY KEY (columnaN, ..., columnaM),
+CONSTRAINT nombre_constraint3 UNIQUE (columnaN, ..., columnaM),
+CONSTRAINT nombre_constraint4 FOREIGN KEY (columnaN, ..., columnaM) REFERENCES otra_tabla(columnaN, ..., columnaM) ON DELETE acción ON UPDATE accion
+) 
+
+practica:
+
+postgres=# create tablespace tbl_curso_edteam location 'C:\PostgreSQL10\tablespaces_train';
+postgres=# create user pedro password 'pedro';
+postgres=# create user pablo password 'pablo';
+postgres=# create database clase04 OWNER=pedro TABLESPACE=tbl_curso_edteam;
+
+postgres=# create table propietarios(identificacion varchar (12), nom_nombres varchar (100) not null, nom_apellidos varchar(100) not null, email varchar (200), constraint pk_propietarios primary key(identificacion));
+
+postgres=# create table telefonos(identificacion varchar (12), telefono varchar (30), constraint pk_telefonos primary key(identificacion,telefono), constraint fk_telefonos_propietarios FOREIGN KEY (identificacion) REFERENCES propietarios(identificacion) on update restrict on delete restrict);
