@@ -30,3 +30,9 @@ postgres=# create database clase04 OWNER=pedro TABLESPACE=tbl_curso_edteam;
 postgres=# create table propietarios(identificacion varchar (12), nom_nombres varchar (100) not null, nom_apellidos varchar(100) not null, email varchar (200), constraint pk_propietarios primary key(identificacion));
 
 postgres=# create table telefonos(identificacion varchar (12), telefono varchar (30), constraint pk_telefonos primary key(identificacion,telefono), constraint fk_telefonos_propietarios FOREIGN KEY (identificacion) REFERENCES propietarios(identificacion) on update restrict on delete restrict);
+
+postgres=# create table departamentos(codigo smallserial, nombre varchar (100) not null, constraint pk_departamentos primary key(codigo));
+
+ver seriales creados con metacomando: \ds
+
+postgres=# create table ciudades(codigo smallserial, nombre varchar (100), departamento smallint not null, constraint pk_ciudades primary key(codigo), constraint fk_ciudades_departamentos foreign key(departamento) references departamentos(codigo) on update restrict on delete restrict);
