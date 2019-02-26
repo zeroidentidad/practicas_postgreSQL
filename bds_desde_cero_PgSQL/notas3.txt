@@ -20,7 +20,7 @@ CONSTRAINT nombre_constraint3 UNIQUE (columnaN, ..., columnaM),
 CONSTRAINT nombre_constraint4 FOREIGN KEY (columnaN, ..., columnaM) REFERENCES otra_tabla(columnaN, ..., columnaM) ON DELETE acción ON UPDATE accion
 ) 
 
-practica:
+Practica:
 
 postgres=# create tablespace tbl_curso_edteam location 'C:\PostgreSQL10\tablespaces_train';
 postgres=# create user pedro password 'pedro';
@@ -33,6 +33,91 @@ postgres=# create table telefonos(identificacion varchar (12), telefono varchar 
 
 postgres=# create table departamentos(codigo smallserial, nombre varchar (100) not null, constraint pk_departamentos primary key(codigo));
 
-ver seriales creados con metacomando: \ds
+Ver seriales creados con metacomando: \ds
 
 postgres=# create table ciudades(codigo smallserial, nombre varchar (100), departamento smallint not null, constraint pk_ciudades primary key(codigo), constraint fk_ciudades_departamentos foreign key(departamento) references departamentos(codigo) on update restrict on delete restrict);
+
+postgres=# create table viviendas(codigo smallserial, dir_calle varchar (50) not null, dir_numero smallint not null, habitantes smallint not null, descripcion text not null, propietario varchar(12) not null, ciudad smallint not null, constraint pk_viviendas primary key(codigo), constraint fk_viviendas_propietarios foreign key(propietario) references propietarios(identificacion) on update restrict on delete restrict, constraint fk_viviendas_ciudades foreign key(ciudad) references ciudades(codigo) on update restrict on delete restrict);
+
+DDL modificar usuario pass: ALTER USER pablo PASSWORD 'x' -- con superuser o admin
+
+DDL modificar BD: 
+
+ALTER DATABASE mibd RENAME TO nuevo_nombre
+ALTER DATABASE mibd OWNER TO nuevo_usuario
+ALTER DATABASE mibd SET TABLESPACE nuevo_tablespace
+
+CDL GRANTS y REVOKES:
+
+GRANT: Permite realizar una accion sobre un objeto - GRANT accion ON objeto TO usuario
+ejemplo: 
+
+GRANT CONNECT ON DATABASE clase04 TO pablo;
+GRANT SELECT ON ciudades TO pablo;
+
+GRANT INSERT ON departamentos TO pablo;
+
+REVOKE: Restringe realizar una accion sobre un objeto - REVOKE accion ON objeto FROM usuario
+ejemplo: 
+
+REVOKE SELECT ON ciudades FROM pablo;
+REVOKE CONNECT ON DATABASE clase04 FROM pablo;
+
+DML INSERTs:
+
+INSERT INTO tabla (campo1, campo2, …, campoN) VALUES (valor1, valor2, …., valorN)
+
+INSERT INTO tabla (campo5, campo3, campo1, campo18, …, campoN) VALUES (valor5, valor1, valor18, …, valorN)
+
+INSERT INTO tabla VALUES (valor1, valor2, …, valorN)
+
+INSERT INTO tabla VALUES (DEFAULT, valorN, valorM, …, valorZ)
+
+INSERT INTO tabla VALUES (valorA1, valorA2, … valorAN),
+			(valorB1, valorB2, …, valorBN),
+			(valorC1, valorC2, … valorCN)
+
+INSERT INTO tabla SELECT consulta_aqui
+
+Practica:
+
+=# insert into departamentos(codigo,nombre) values(default, 'TABASCO');
+
+=# insert into departamentos values(default, 'CHIAPAS');
+
+=# insert into departamentos values(default, 'CAMPECHE'), (default, 'VERACRUZ'), (default, 'PUEBLA');
+
+DML UPDATEs:
+
+UPDATE tabla SET campo1 = valor1, campo2 = valor2, …, campoN = valorN WHERE campoM = valorM
+
+Where:
+	WHERE campoM = valorM (=, >, <, <>)
+	WHERE campoM BETWEEN valor1 AND valor2
+	WHERE campoM IN (valor1, valor2, …, valorN)
+	WHERE campoM IN SELECT consulta
+	WHERE campoM NOT IN…
+
+Practica:
+
+=# update departamentos SET nombre = 'YUCATAN' WHERE codigo=8;
+
+=# update departamentos SET nombre = 'ACTUALIZADO' where codigo between 3 and 5;
+
+DML DELETEs:
+
+DELETE FROM tabla WHERE campoN = valorN
+
+Where:
+	WHERE campoM = campoM (=, >, <, <>)
+	WHERE campoM BETWEEN valor1 AND valor2
+	WHERE campoM IN (valor1, valor2, …, valorN)
+	WHERE campoM IN SELECT consulta
+	WHERE campoM NOT IN…
+
+DELETE FROM tabla; -> Otra forma es con TRUNCATE : TRUNCATE departamentos;
+
+Practica:
+
+=# DELETE from departamentos WHERE nombre = 'ACTUALIZADO'; -- postgresql es Case Sensitive
+
