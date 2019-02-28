@@ -1,0 +1,13 @@
+- Notas modulo 5 sobre algebra relacional sql -
+
+sobre hacer backup herramienta instalada: 
+
+En archivo comprimido asi:
+
+pg_dump --host localhost --port 5432 --username postgres --verbose --file backup_mmddyyyy.backup mibasedatos
+
+En archivo plano asi:
+
+pg_dump --host localhost --port 5432 --username postgres --verbose --inserts --column-inserts --file backup_mmddyyyy.backup mibasedatos
+
+pg_dump --host localhost --port 5432 --username postgres --verbose --inserts --column-inserts --file backup_mmddyyyy.sql mibasedatos
