@@ -11,3 +11,11 @@ En archivo plano asi:
 pg_dump --host localhost --port 5432 --username postgres --verbose --inserts --column-inserts --file backup_mmddyyyy.backup mibasedatos
 
 pg_dump --host localhost --port 5432 --username postgres --verbose --inserts --column-inserts --file backup_mmddyyyy.sql mibasedatos
+
+Sobre hacer restauración backup en psql: 
+
+ir a la ruta donde se guardo el archivo exportado: cd /ruta/archivo
+
+luego conectarse a la base de datos a usar: =>/ruta/archivo$ psql -U usuariobd -d mibd
+
+ejecutar la sentencia del metacomando de importación: =>/ruta/archivo$ \i archivo_resp.backup
