@@ -32,3 +32,19 @@ select * from ventas where cantidad between 10 and 15;
 
 select * from productos where vencimiento between '2019-03-01' and '2019-03-15';
 
+select * from distintos where color_a IN('AZUL', 'rolo', verde', 'amarillo');
+
+select * from distintos where color_a IN(select nombre from colores);
+
+select * from distintos where color_a IS NULL; -- nulo no siginifica vacio ' '
+
+select * from distintos where color_a NOT IN(select nombre from colores);
+
+select * from colores where nombre EXISTS(select * from nombres); -- mostrar info de la consulta si de la subconsulta se obtuvo información, es decir, existe algo que retorne valor
+
+select * from colores where nombre EXISTS(select 1 from nombres where 3 = 8);
+
+select *, CASE WHEN valor > 500 THEN 'Caro' ELSE 'Economico' END from productos;
+
+select *, CASE WHEN valor < 500 THEN 'Economico' WHEN valor = 1200 THEN 'Normal' WHEN valor > 1200 THEN 'Caro' END from productos;
+
