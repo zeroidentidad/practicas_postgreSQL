@@ -1,0 +1,34 @@
+- Notas modulo 6 sobre SELECT a fondo -
+
+Funcion fecha actual: SELECT now();
+
+Obtener parte de la fecha: SELECT date_part('MONTH', now());
+
+Ejercicios:
+
+select nombre, valor from colores where nombre='azul';
+
+select nombre, valor from colores where UPPER(nombre)=UPPER('azul');
+
+select consecutivo, producto, cantidad from ventas where producto = 4;
+
+select from ventas where cantidad > 15; select from ventas where cantidad < 15;
+
+select from ventas where producto <> 4; select from ventas where producto != 4;
+
+select from ventas where producto <= 3; select from ventas where producto >= 3;
+
+select * from nombres where nombre like 'Andres%'; select * from nombres where nombre like '%gmail.com';
+
+select * from nombres where nombre like '%el%';
+
+select * from nombres where nombre like 'Carlos Acero_'; -- comodin de un solo caracter
+
+select * from nombres where nombre ILKE 'CARLOS ___RO_';
+
+select * from nombres where nombre ilike 'CARLOS%'; -- con ILIKE se evita el case sensitive en PgSQL
+
+select * from ventas where cantidad between 10 and 15;
+
+select * from productos where vencimiento between '2019-03-01' and '2019-03-15';
+
