@@ -19,3 +19,49 @@ ir a la ruta donde se guardo el archivo exportado: cd /ruta/archivo
 luego conectarse a la base de datos a usar: =>/ruta/archivo$ psql -U usuariobd -d mibd
 
 ejecutar la sentencia del metacomando de importación: =>/ruta/archivo$ \i archivo_resp.backup
+
+Operaciones de conjuntos
+
+Union: el UNION no muestra los repetidos, UNION ALL muestra todos los registros y los que estan repetidos
+
+Intersección: el INTERSECT muestra registro o información que existe ó es la misma en dos relaciones o tablas diferentes. Su equivalencia en filtrado (WHERE) es con el IN con una subconsulta con la misma estructura
+
+Diferencia: el EXCEPT muestra la información que esta en la segunda relación pero que no se encuentra en la primera tabla, es decir, se descarta el conjunto que si hay en ambas. Su equivalencia en filtrado (WHERE) es con el NOT IN con una subconsulta con la misma estructura
+
+JOIN: la combinación relacional. Tipos son:
+
+CROSS JOIN, producto cartesiano de las relaciones que intervienen en la combinación, asi:
+
+SELECT a.campo1, a.campo2, …, a.campoN, b.campo1, b.campo2, …, b.campoN
+FROM tabla1 as a CROSS JOIN tabla2 as b
+
+NATURAL JOIN, combina relaciones de manera natural entre clave primaria de una y clave foránea de otra, asi:
+
+SELECT a.campo1, a.campo2, …, a.campoN, b.campo1, b.campo2, …, b.campoN
+FROM tabla1 as a NATURAL INNER JOIN tabla2 as b
+
+INNER JOIN, combina dos relaciones cuando se necesita especificar el/los atributo(s) con que se combinarán, asi:
+
+SELECT a.campo1, a.campo2, …, a.campoN, b.campo1, b.campo2, …, b.campoN
+FROM tabla1 as a INNER JOIN tabla2 as b ON a.campo1 = b.campo1 (AND a.campo2 = b.campo2 …)
+
+LEFT JOIN, combina realizando primero un INNER JOIN y luego añade aquellas filas de la relación nombrada en la parte izquierda de la sentencia que no satisfacen la combinación con la relación de la parte derecha, asi:
+
+SELECT a.campo1, a.campo2, …, a.campoN, b.campo1, b.campo2, …, b.campoN
+FROM tabla1 as a LEFT JOIN tabla2 as b ON a.campo1 = b.campo1
+
+RIGHT JOIN, combina realizando primero un INNER JOIN y luego añade aquellas filas de la relación nombrada en la parte derecha de la sentencia que no satisfacen la combinación con la relación de la parte izquierda, asi:
+
+SELECT a.campo1, a.campo2, …, a.campoN, b.campo1, b.campo2, …, b.campoN
+FROM tabla1 as a RIGHT JOIN tabla2 as b ON a.campo1 = b.campo1
+
+FULL JOIN, combina relaciones realizando primero un INNER JOIN y luego realiza un Left Join y por último un Right Join, asi:
+
+SELECT a.campo1, a.campo2, …, a.campoN, b.campo1, b.campo2, …, b.campoN
+FROM tabla1 as a FULL JOIN tabla2 as b ON a.campo1 = b.campo1
+
+Backup BD remota: pg_dump -h 45.55.140.220 --port 5432 --username estudiante --inserts --column-inserts --verbose --file mibackup.sql algebra
+
+JOIN multiple, asi:
+
+select v.numero, v.valor, c.nombre as cliente, e.nombre as vendedor from ventas_contado v INNER JOIN clientes c ON v.identificacion=c.indentificacion INNER JOIN vendedor e ON v.vendedor=e.codigo
