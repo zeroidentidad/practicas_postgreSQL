@@ -58,7 +58,9 @@ select * from tmp_consulta;
 
 select DISTINCT color_a, color_b from distintos; -- muestra los valores unicos descartando despues de cada uno los iguales, para no repetir de la proyecccion en la consulta
 
-select DISTINCT(color_a) color_a, color_b from distintos ORDER BY color_a, color_b;
+select DISTINCT ON (color_a) color_a, color_b from distintos ORDER BY color_a, color_b; -- saber el primer registro y toda su info de las columnas proyectadas
+
+select DISTINCT ON (color_a) color_a, color_b from distintos ORDER BY color_a, color_b DESC; -- saber el ultimo registro y toda su info de las columnas proyectadas
 
 - Clausulas de agregación: MIN, MAX, SUM, COUNT, AVG
 
