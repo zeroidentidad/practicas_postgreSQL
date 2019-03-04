@@ -48,3 +48,55 @@ select *, CASE WHEN valor > 500 THEN 'Caro' ELSE 'Economico' END from productos;
 
 select *, CASE WHEN valor < 500 THEN 'Economico' WHEN valor = 1200 THEN 'Normal' WHEN valor > 1200 THEN 'Caro' END from productos;
 
+select v.consecutivo, v.producto, p.nombre, v.cantidad, p.valor, v.cantidad * p.valor AS valor_total FROM ventas v INNER JOIN productos p ON v.producto = p.codigo
+
+EL INTO, tabla temporal calculada y uso:
+
+select v.consecutivo, v.producto, p.nombre, v.cantidad, p.valor, v.cantidad * p.valor AS valor_total INTO tmp_consulta FROM ventas v INNER JOIN productos p ON v.producto = p.codigo
+
+select * from tmp_consulta;
+
+select DISTINCT color_a, color_b from distintos; -- muestra los valores unicos descartando despues de cada uno los iguales, para no repetir de la proyecccion en la consulta
+
+select DISTINCT(color_a) color_a, color_b from distintos ORDER BY color_a, color_b;
+
+- Clausulas de agregación: MIN, MAX, SUM, COUNT, AVG
+
+select MIN(cantidad) as minimo from ventas; select MAX(cantidad) as maximo from ventas;
+
+select AVG(cantidad) as promedio from ventas; select SUM(cantidad) as suma_total from ventas;
+
+select COUNT(cantidad) as cantitad_ventas from ventas;
+
+select MIN(cantidad) minimo, MAX(cantidad) maximo, COUNT(cantidad) cuenta, SUM(cantidad) suma, AVG(cantidad) promedio from ventas;
+
+select PRODUCTO, SUM(CANTIDAD) AS SUMA FROM VENTAS GROUP BY PRODUCTO; -- necesario agrupar cuando se usa funcion de agregación
+
+select v.producto, p.nombre, sum(v.cantidad) AS SUMA from ventas as v INNER JOIN productos p ON v.producto = p.codigo group by v.producto, p.nombre
+
+- Formas de ordenamiento:
+
+select producto, cantidad from ventas order by producto, cantidad; -- ASC por default
+
+select producto, cantidad from ventas order by producto, cantidad DESC;
+
+select producto, cantidad from ventas order by 1, 2; -- orden por numero de columna sin saber su nombre
+
+select producto, cantidad from ventas order by producto DESC, cantidad ASC; 
+
+- Filtro por grupo HAVING:
+
+select producto, SUM(cantidad) AS SUMA from ventas group by producto having SUM(cantidad) > 18;
+
+select nombre, count(*) cantidad from nombres group by nombre having count(*) > 1; -- util ver registros repetidos
+
+- Paginación registros:
+
+select * from ventas LIMIT 5;  select * from ventas order by producto DESC LIMIT 5;
+
+
+select * from ventas LIMIT 5;  select * from ventas order by producto DESC LIMIT 5 OFFSET 5;
+
+select * from ventas order by consecutivo DESC LIMIT 5 OFFSET 0;
+
+select * from ventas order by consecutivo DESC LIMIT 5 OFFSET 5;
