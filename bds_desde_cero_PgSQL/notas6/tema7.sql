@@ -100,7 +100,7 @@ CANTIDAD DE REGISTROS * PAGINA QUE SE QUIERE VER - CANTIDAD DE REGISTROS
 
 -- CREACIÓN DE LA FUNCIÓN
 CREATE OR REPLACE FUNCTION ventas_paginadas(_registros integer, _pagina integer)
-RETURNS SETOF ventas
+RETURNS SETOF ventas -- devolver conjunto de (tabla usada en la funcion)
 AS
 $BODY$
 DECLARE
@@ -220,11 +220,3 @@ LANGUAGE plpgsql;
 -- LLAMADO DE LA FUNCIÓN
 SELECT * FROM auditoria;
 SELECT * FROM fn_mostrar_ventas('Jesus Ferrer');
-
-
-
-
-
-
-
-
