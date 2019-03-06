@@ -1,0 +1,229 @@
+﻿CREATE TABLE productos(
+  nombre varchar(20),
+  cantidad smallint,
+  precio smallint,
+  ultima_modificacion timestamp,
+  ultimo_usuario_bd text
+)
+
+-- CREACIÓN DE TRIGGER (STANDAR)
+-- CREATE TRIGGER nombre
+-- CUANDO ACCION[ES]
+-- AS
+--  AQUÍ EL CÓDIGO
+
+-- CREAR LA FUNCIÓN QUE SOLICITA POSTGRES
+CREATE OR REPLACE FUNCTION valida_productos()
+RETURNS TRIGGER AS
+$BODY$
+BEGIN
+  IF NEW.nombre IS NULL OR length(NEW.nombre) = 0 THEN
+     RAISE EXCEPTION 'El nombre debe contener alguna información';
+  END IF;
+  IF NEW.cantidad < 0 THEN
+     RAISE EXCEPTION 'La cantidad no puede ser negativa';
+  END IF;
+  IF NEW.precio < 0 THEN
+     RAISE EXCEPTION 'El precio no puede ser negativo';
+  END IF;
+
+  NEW.ultima_modificacion = now();
+  NEW.ultimo_usuario_bd = user;
+  RETURN NEW;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+-- CREACIÓN DEL TRIGGER
+CREATE TRIGGER valida_productos
+BEFORE INSERT OR UPDATE
+ON productos
+FOR EACH ROW EXECUTE PROCEDURE valida_productos();
+
+SELECT * FROM productos;
+
+INSERT INTO productos (nombre, cantidad, precio)
+VALUES ('PAPA', 10, 1000);
+
+UPDATE productos SET cantidad = 15 WHERE nombre = 'PAPA';
+
+-- CREACIÓN DE UNA AUDITORÍA
+
+-- 1. CREAR TABLA DE AUDITORIA
+CREATE TABLE auditoria_productos(
+  accion varchar(20),
+  fecha timestamp,
+  nombre varchar(20),
+  cantidad smallint,
+  precio smallint
+)
+
+-- 2. CREAR LA FUNCIÓN DE AUDITORÍA
+CREATE OR REPLACE FUNCTION auditoria_productos()
+RETURNS TRIGGER AS
+$BODY$
+BEGIN
+  IF TG_OP = 'INSERT' THEN
+     INSERT INTO auditoria_productos (accion, fecha, nombre, cantidad, precio)
+     VALUES ('INSERTAR', now(), NEW.nombre, NEW.cantidad, NEW.precio);
+     RETURN NEW;
+  ELSIF TG_OP = 'DELETE' THEN
+     INSERT INTO auditoria_productos (accion, fecha, nombre, cantidad, precio)
+     VALUES ('BORRAR', now(), OLD.nombre, OLD.cantidad, OLD.precio);
+     RETURN NULL;
+  ELSIF TG_OP = 'UPDATE' THEN
+     INSERT INTO auditoria_productos (accion, fecha, nombre, cantidad, precio)
+     VALUES ('ANTES ACTUALIZAR', now(), OLD.nombre, OLD.cantidad, OLD.precio);
+     INSERT INTO auditoria_productos (accion, fecha, nombre, cantidad, precio)
+     VALUES ('DESPUES ACTULIZAR', now(), NEW.nombre, NEW.cantidad, NEW.precio);
+     RETURN NEW;
+  END IF;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+-- 3. CREAR EL TRIGGER
+CREATE TRIGGER auditoria_productos
+AFTER INSERT OR UPDATE OR DELETE
+ON productos
+FOR EACH ROW EXECUTE PROCEDURE auditoria_productos();
+
+-- 4. Prueba del trigger
+SELECT * FROM PRODUCTOS;
+SELECT * FROM AUDITORIA_PRODUCTOS;
+
+-- 4.1 INSERTAR
+INSERT INTO PRODUCTOS (nombre, cantidad, precio)
+VALUES ('YUCA', 5, 1900);
+INSERT INTO PRODUCTOS (nombre, cantidad, precio)
+VALUES ('CARNE', 40, 3500);
+INSERT INTO PRODUCTOS (nombre, cantidad, precio)
+VALUES ('ARROZ', 22, 2200);
+
+-- 4.2 BORRAR
+DELETE FROM productos WHERE nombre = 'PAPA';
+
+-- 4.3 ACTUALIZAR
+UPDATE productos SET cantidad = 20 WHERE nombre = 'CARNE';
+
+
+-- 5 CREAR TRIGGER PARA CONTROLAR LA CANTIDAD DE INVENTARIO
+-- 5.1 CREAR UNA TABLA PARA LAS COMPRAS
+CREATE TABLE compras(
+  consecutivo smallserial,
+  fecha date,
+  nombre varchar(20),
+  cantidad smallint,
+  precio smallint
+)
+
+-- 5.2 CREAR UNA TABLA PARA LAS VENTAS
+CREATE TABLE ventas(
+  consecutivo smallserial,
+  fecha date,
+  nombre varchar(20),
+  cantidad smallint,
+  precio smallint
+)
+
+-- 5.3 CREAR FUNCION QUE CONTROLE LAS COMPRAS
+CREATE OR REPLACE FUNCTION compra_productos()
+RETURNS TRIGGER AS
+$BODY$
+BEGIN
+  PERFORM nombre FROM productos WHERE nombre = NEW.nombre; -- si exite o no registro con PERFORM
+  IF FOUND THEN
+	UPDATE productos
+	SET cantidad = cantidad + NEW.cantidad, precio = NEW.precio
+	WHERE nombre = NEW.nombre;
+  ELSE 
+	INSERT INTO productos (nombre, cantidad, precio)
+	VALUES (NEW.nombre, NEW.cantidad, NEW.precio);
+  END IF;
+  RETURN NEW;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+-- 5.4 CREAR LA FUNCION DE VENTAS
+CREATE OR REPLACE FUNCTION venta_productos()
+RETURNS TRIGGER AS
+$BODY$
+DECLARE
+  producto productos%ROWTYPE;
+BEGIN
+  SELECT * INTO producto FROM productos WHERE nombre = NEW.nombre;
+  IF FOUND THEN
+    IF producto.cantidad >= NEW.cantidad THEN
+       UPDATE productos
+       SET cantidad = cantidad - NEW.cantidad
+       WHERE nombre = NEW.nombre;
+    ELSE
+      RAISE EXCEPTION 'No hay suficiente cantidad para la venta: %', producto.cantidad;
+    END IF;
+    RETURN NEW;
+  ELSE
+    RAISE EXCEPTION 'No existe el producto a vender: %', NEW.nombre;
+  END IF;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+-- 5.5 CREAR EL TRIGGER DE COMPRAS
+CREATE TRIGGER compra_productos
+AFTER INSERT
+ON compras
+FOR EACH ROW EXECUTE PROCEDURE compra_productos();
+
+-- 5.6 CREAR EL TRIGGER DE VENTAS
+CREATE TRIGGER venta_productos
+BEFORE INSERT
+ON ventas
+FOR EACH ROW EXECUTE PROCEDURE venta_productos();
+
+-- 5.7 Prueba de funcionamiento
+SELECT * FROM productos;
+SELECT * FROM auditoria_productos;
+SELECT * FROM compras;
+SELECT * FROM ventas;
+
+-- 5.7.1 COMPRANDO UN PRODUCTO EXISTENTE
+INSERT INTO compras (fecha, nombre, cantidad, precio)
+VALUES (now(), 'YUCA', 2, 2000);
+
+-- 5.7.2 COMPRANDO UN PRODUCTO QUE NO EXISTE
+INSERT INTO compras (fecha, nombre, cantidad, precio)
+VALUES (now(), 'PAPA', 10, 1500);
+
+-- 5.7.3 VENDIENDO UN PRODUCTO QUE NO EXISTE
+INSERT INTO ventas (fecha, nombre, cantidad, precio)
+VALUES (now(), 'MORA', 5, 200);
+
+-- 5.7.4 VENDIENDO UN PRODUCTO EXISTENTE PERO SIN LA SUFICIENTE CANTIDAD
+INSERT INTO ventas (fecha, nombre, cantidad, precio)
+VALUES (now(), 'YUCA', 8, 2000);
+
+-- 5.7.5 VENDIENDO UN PRODUCTO EXISTENTE CON SUFICIENTE CANTIDAD
+INSERT INTO ventas (fecha, nombre, cantidad, precio)
+VALUES (now(), 'ARROZ', 2, 2000);
+
+-- VARIABLES DE LOS TRIGGER
+-- NEW Contiene la información del nuevo registro que se esté trabajando
+-- OLD Contiene la información del registro anterior a la operación
+-- TG_OP Contiene el nombre de la operación que estamos realizando
+
+-- MOMENTOS DE EJECUCION DEL TRIGGER (CUANDO?)
+-- BEFORE Antes de realizar la acción
+-- AFTER Despues de realizar la acción
+
+-- ACCIONES
+-- INSERT, UPDATE, DELETE
+
+-- CAPTURAR EL RAISE EXCEPTION EN JAVA
+-- try {
+--   // aqui la conexion
+--   // sentencia
+-- // resultset
+-- } catch (SQLException sqle) {
+--  System.out.println(sqle.getMessage());
+-- }
