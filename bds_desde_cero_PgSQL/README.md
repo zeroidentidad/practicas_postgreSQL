@@ -1,4 +1,4 @@
-#Comandos basicos
+# Comandos basicos
 
 config "pg_hba.conf" conexion local confiable (solo en el mismo equipo), agregar:
 
@@ -7,7 +7,7 @@ local    all            postgres        127.0.0.1/32            trust    #a:
 host    all            postgres        127.0.0.1/32            trust
 
 
-##Metacomandos mas usados:
+## Metacomandos mas usados:
 
 \l  # listar bds
 \c  # conectar bd a usar
@@ -40,7 +40,7 @@ crear db que use el tablespace creado:
 2- \! ls -la
 
 
-#Funciones select:
+# Funciones select:
 
 longitud campo caracteres: select char_length('texto o campo de prueba aqui ');
 
@@ -57,11 +57,11 @@ usar secuencia para campo id:
 insert into tabla values('valor1', 10, nextval('secuencia_regs'));
 
 
-#Sobre diseño de BD:
+# Sobre diseño de BD:
 
 tipos de atributos: simple - monovaluado, identificador principal, identificador alternativo, multivaluado, opcional, compuesto
 
-##Practicas sentencias:
+## Practicas sentencias:
 
 DDL:
 
@@ -184,7 +184,7 @@ Practica:
 
 =# DELETE from departamentos WHERE nombre = 'ACTUALIZADO'; -- postgresql es Case Sensitive
 
-#Algebra relacional sql
+# Algebra relacional sql
 
 sobre hacer backup herramienta instalada: 
 
@@ -252,7 +252,7 @@ JOIN multiple, asi:
 
 select v.numero, v.valor, c.nombre as cliente, e.nombre as vendedor from ventas_contado v INNER JOIN clientes c ON v.identificacion=c.indentificacion INNER JOIN vendedor e ON v.vendedor=e.codigo
 
-#Notas sobre SELECT a fondo
+# Notas sobre SELECT a fondo
 
 Funcion fecha actual: SELECT now();
 
@@ -316,7 +316,7 @@ select DISTINCT ON (color_a) color_a, color_b from distintos ORDER BY color_a, c
 
 select DISTINCT ON (color_a) color_a, color_b from distintos ORDER BY color_a, color_b DESC; -- saber el ultimo registro y toda su info de las columnas proyectadas
 
-- Clausulas de agregación: MIN, MAX, SUM, COUNT, AVG
+## Clausulas de agregación: MIN, MAX, SUM, COUNT, AVG
 
 select MIN(cantidad) as minimo from ventas; select MAX(cantidad) as maximo from ventas;
 
@@ -330,7 +330,7 @@ select PRODUCTO, SUM(CANTIDAD) AS SUMA FROM VENTAS GROUP BY PRODUCTO; -- necesar
 
 select v.producto, p.nombre, sum(v.cantidad) AS SUMA from ventas as v INNER JOIN productos p ON v.producto = p.codigo group by v.producto, p.nombre
 
-- Formas de ordenamiento:
+## Formas de ordenamiento:
 
 select producto, cantidad from ventas order by producto, cantidad; -- ASC por default
 
@@ -340,13 +340,13 @@ select producto, cantidad from ventas order by 1, 2; -- orden por numero de colu
 
 select producto, cantidad from ventas order by producto DESC, cantidad ASC; 
 
-- Filtro por grupo HAVING:
+## Filtro por grupo HAVING:
 
 select producto, SUM(cantidad) AS SUMA from ventas group by producto having SUM(cantidad) > 18;
 
 select nombre, count(*) cantidad from nombres group by nombre having count(*) > 1; -- util ver registros repetidos
 
-- Paginación registros:
+## Paginación registros:
 
 select * from ventas LIMIT 5;  select * from ventas order by producto DESC LIMIT 5;
 
@@ -357,7 +357,7 @@ select * from ventas order by consecutivo DESC LIMIT 5 OFFSET 0;
 
 select * from ventas order by consecutivo DESC LIMIT 5 OFFSET 5;
 
-#Ejemplo PLpgSQL
+# Ejemplo PLpgSQL
 
 ```sql
 CREATE TABLE productos(
