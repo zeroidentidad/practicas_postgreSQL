@@ -1,4 +1,4 @@
-- Ejemplo de emulación NoSQL con MongoDB desde una terminal online: 
+#Ejemplo emulación NoSQL con MongoDB desde una terminal online: 
 
 https://www.tutorialspoint.com/mongodb_terminal_online.php
 
@@ -11,8 +11,7 @@ db.productos.find({precio:{$gt:10}}, {producto:1}); -- esta funcion recibe 2 cam
 db.productos.find({precio:{$gt:10}}, {producto:1, _id:0}); -- :1 (mostrar), :0 (no mostrar) $gt (grand than)
 
 
-
-- Ejemplo NoSQL con PostgreSQL:
+##Ejemplo NoSQL con PostgreSQL:
 
 create table minosql(
 consecutivo serial,

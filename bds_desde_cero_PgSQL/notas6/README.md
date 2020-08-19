@@ -1,4 +1,4 @@
-- Notas modulo 7 sobre programación procedural -
+##Notas modulo 7 sobre programación procedural
 
 crear base de datos "clase06"
 
